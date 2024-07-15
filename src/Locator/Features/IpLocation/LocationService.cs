@@ -2,22 +2,23 @@
 using Locator.Features.IpLocation.Domain;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Bson;
+using System.Net;
 
 namespace Locator.Features.IpLocation
 {
     public class LocationService(LocatorDbContext _dbContext, IGeoLocationApi _geoLocationApi)
     {
-        public async Task<LocationResponse> GetLocationByIP(string ip,CancellationToken cancellationToken)
+        public async Task<LocationResponse> GetLocationByIP(IPAddress ip,CancellationToken cancellationToken)
         {
             try
             {
-                var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.Ip == ip, cancellationToken);
+                var location = await _dbContext.Locations.FirstOrDefaultAsync(x => x.Ip == ip.ToString(), cancellationToken);
 
                 if (location is not null)
                 {
                     return (LocationResponse)location;
                 }
-                var newLocation = await FetchLocationFromApi(ip, cancellationToken);
+                var newLocation = await FetchLocationFromApi(ip.ToString(), cancellationToken);
                 return (LocationResponse)newLocation;
             }
             catch (Exception ex)

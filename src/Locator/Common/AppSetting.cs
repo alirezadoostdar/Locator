@@ -4,6 +4,7 @@
     {
         public MongoDbSetting MongoDbSetting { get; set; } = null;
         public Features Featuers { get; set; } = null;
+        public RabbitMqConfigurations RabbitMqConfigurations { get; set; } = null;
     }
 
     public class MongoDbSetting
@@ -16,4 +17,12 @@
     {
 
     }
+
+    public class RabbitMqConfigurations
+    {
+        public string Host { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
+
 }
