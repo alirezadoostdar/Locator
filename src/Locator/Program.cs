@@ -12,7 +12,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<LocationService>();
 builder.Services.AddScoped<IGeoLocationApi,IPGeolocationProvider>();
 
+builder.Services.Configure<AppSetting>(builder.Configuration);
 var settings = builder.Configuration.Get<AppSetting>();
+ArgumentNullException.ThrowIfNull(settings, nameof(settings));
 
 builder.Services.AddDbContext<LocatorDbContext>(options =>
 {
@@ -22,6 +24,12 @@ builder.Services.AddDbContext<LocatorDbContext>(options =>
     }
     options.UseMongoDB(settings.MongoDbSetting.Host, settings.MongoDbSetting.DatabaseName);
 });
+
+builder.Services.AddHttpClient<IGeoLocationApi,IPGeolocationProvider>(options =>
+{
+    options.BaseAddress = new Uri(settings.Featuers.IpLocation.IPGeolocationProviderBaseUrl);
+}).SetHandlerLifetime(Timeout.InfiniteTimeSpan);
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

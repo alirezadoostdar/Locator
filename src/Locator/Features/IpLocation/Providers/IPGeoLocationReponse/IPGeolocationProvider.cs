@@ -1,21 +1,20 @@
-﻿using Locator.Features.IpLocation.Model;
+﻿using Locator.Common;
+using Locator.Features.IpLocation.Model;
+using Microsoft.Extensions.Options;
 
 namespace Locator.Features.IpLocation.Providers.IPGeoLocationReponse
 {
-    public class IPGeolocationProvider : IGeoLocationApi
+    public class IPGeolocationProvider(IOptions<AppSetting> options, HttpClient httpClient) : IGeoLocationApi
     {
+        private readonly IpLocationSettings _settings = options.Value.Featuers.IpLocation;
         public async Task<GeolocationApiResponse> GetAsync(string ip ,CancellationToken cancellationToken)
         {
-            string apiKey = "1ecfa9a4e7d6487eb02fb43dd6dc0acb"; // کلید API خود را جایگزین کنید
-            string apiUrl = "https://api.ipgeolocation.io/ipgeo";
-            string ipAddress = "94.182.46.220"; // آدرس IP مورد نظر خود را وارد کنید
 
-            string urlWithParams = $"{apiUrl}?apiKey={apiKey}&ip={ipAddress}";
-            var httpClient = new HttpClient();
-            HttpResponseMessage res = await httpClient.GetAsync(urlWithParams);
+            string url = $"?apiKey={_settings.IPGeolocationProviderAPIKey}&ip={ip}";
+            HttpResponseMessage res = await httpClient.GetAsync(url);
             res.EnsureSuccessStatusCode();
             string responseBody = await res.Content.ReadAsStringAsync();
-            var response = await httpClient.GetFromJsonAsync<IPGeoLocationResponse>(urlWithParams, cancellationToken);
+            var response = await httpClient.GetFromJsonAsync<IPGeoLocationResponse>(url, cancellationToken);
             if (response is null)
             {
                 throw new Exception("h");
