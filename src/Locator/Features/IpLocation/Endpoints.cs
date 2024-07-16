@@ -2,6 +2,7 @@
 using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Xml.Linq;
 
 namespace Locator.Features.IpLocation
 {
@@ -32,11 +33,14 @@ namespace Locator.Features.IpLocation
                  return await locationService.GetLocationDetailByIp(IpAddress, cancellationToken);
             });
 
-            endpointGroup.MapPost("notify", (IPublishEndpoint publicher) =>
+            endpointGroup.MapPost("/notify/{ip_address}",([FromRoute(Name = "ip_addres")] string IpAddress,
+                IPublishEndpoint publicher) =>
             {
-                return publicher.Publish(new GetIpLocationMessage("94.182.46.220"));
+                return publicher.Publish(new GetIpLocationMessage(IpAddress));
             });
+            
             return endpoint;
         }
+
     }
 }

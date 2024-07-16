@@ -9,4 +9,7 @@ public class IpLocationSettings
 {
     public required string IPGeolocationProviderAPIKey { get; set; }
     public required string IPGeolocationProviderBaseUrl { get; set; }
+    public required string IPApiProviderBaseUrl { get; set; }
+
 }
+
